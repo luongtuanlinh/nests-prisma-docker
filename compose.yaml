@@ -1,0 +1,26 @@
+services:
+  app:
+    image: node:18.16.0-alpine
+    user: node
+    working_dir: /home/node/app
+    env_file: .env
+    volumes:
+      - .:/home/node/app
+    ports:
+      - ${APP_PORT:-3000}:3000
+    command: npm run start:dev
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0.33
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      TZ: ${TZ}
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
